@@ -9,9 +9,16 @@ import SwiftUI
 
 struct GameView: View {
     
-    var field: Field
-    let renderer = FieldRenderer()
-    let timer: Lftimer
+    // model
+    
+    let cells: [[Int]]
+    let renderZone: FieldRenderer.RenderZone
+    
+    // private
+    
+    private let field = Field()
+    private let renderer = FieldRenderer()
+    private let timer = Lftimer(timeInterval: 0.1)
     
     var body: some View {
         
@@ -33,10 +40,28 @@ struct GameView: View {
                 renderer.renderZone = newRenderZone
             }
         }
+        .onAppear { // setup data
+            field.setup(cells: cells)
+            timer.action = {
+                field.getNextGeneration()
+            }
+            timer.start()
+        }
+        .onDisappear {
+            timer.stop()
+        }
     }
     
 }
 
 #Preview {
-    GameView(field: Field(), timer: Lftimer())
+    let cells = [
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+        [0, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+    ]
+    
+    return GameView(cells: cells, renderZone: FieldRenderer.RenderZone())
 }

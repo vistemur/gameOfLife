@@ -2,11 +2,9 @@ import SwiftUI
 
 struct FieldSetupView: View {
     
-    var field = Field()
-    var playField = Field()
-    @State var renderer = FieldRenderer()
-    let timer = Lftimer(timeInterval: 1.0)
-    
+    private var field = Field()
+    private var renderer = FieldRenderer()
+
     var body: some View {
         NavigationView {
             VStack {
@@ -42,21 +40,11 @@ struct FieldSetupView: View {
                         renderer.renderZone = newRenderZone
                     }
                 }
-                                
+
                 NavigationLink(
-                    destination: GameView(field: playField, timer: timer)
+                    destination: GameView(cells: field.cells, renderZone: renderer.renderZone)
                 ) {
                     Text("start")
-                }
-                .simultaneousGesture(TapGesture().onEnded { _ in
-                    playField.cells = field.addBorders(cells: field.cells)
-                    timer.action = {
-                        playField.cells = playField.getNextGeneration(playField.cells)
-                    }
-                    timer.start()
-                })
-                .onAppear {
-                    timer.stop()
                 }
                 
             }

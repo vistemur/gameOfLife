@@ -2,23 +2,21 @@ import SwiftUI
 
 @Observable class Field {
     
-    var cells: [[Int]]
+    private(set) var cells: [[Int]]
     
     var width: Int { cells.first?.count ?? 0 }
     var height: Int { cells.count }
     
+    private var swapArray: [[Int]]
+    
     init(width: Int = 4, height: Int = 4) {
-        var cells = [[Int]]()
-        
-        for _ in 1 ... height {
-            let row = Array(repeating: 0, count: width)
-            cells.append(row)
-        }
-        self.cells = cells
+        self.cells = Array(repeating: Array(repeating: 0, count: width), count: height)
+        self.swapArray = Array(repeating: Array(repeating: 0, count: width), count: height)
     }
     
-    init(cells: [[Int]]) {
+    func setup(cells: [[Int]]) {
         self.cells = cells.map { $0.map { $0 } }
+        self.swapArray = cells.map { $0.map { $0 } }
     }
     
     func toggle(_ location: CGPoint) { // from center
@@ -37,6 +35,7 @@ import SwiftUI
         if Int(newWidth) > width
             || Int(newHeight) > height {
             cells = resize(cells: cells, newWidth: Int(newWidth), newHeight: Int(newHeight))
+            swapArray = Array(repeating: Array(repeating: 0, count: width), count: height)
         }
                 
         let x = Int(CGFloat(width) / 2 + location.x)
@@ -73,8 +72,7 @@ import SwiftUI
         return newArray
     }
     
-    func getNextGeneration(_ cells: [[Int]]) -> [[Int]] {
-        var newArray = cells.map { $0.map { _ in 0 } }
+    func getNextGeneration() {
         var borderTouchedY = false
         var borderTouchedX = false
         
@@ -83,19 +81,19 @@ import SwiftUI
                 let neighbors = neighborsAmount(cells: cells, y: y, x: x)
                 if cells[y][x] == 0 {
                     if neighbors == 3 {
-                        newArray[y][x] = 1
+                        swapArray[y][x] = 1
                         borderTouchedX = (x == 0 || x == width - 1) ? true : borderTouchedX
                         borderTouchedY = (y == 0 || y == height - 1) ? true : borderTouchedY
                     } else {
-                        newArray[y][x] = 0
+                        swapArray[y][x] = 0
                     }
                 } else {
                     if neighbors == 2 || neighbors == 3  {
-                        newArray[y][x] = 1
+                        swapArray[y][x] = 1
                         borderTouchedX = (x == 0 || x == width - 1) ? true : borderTouchedX
                         borderTouchedY = (y == 0 || y == height - 1) ? true : borderTouchedY
                     } else {
-                        newArray[y][x] = 0
+                        swapArray[y][x] = 0
                     }
                 }
             }
@@ -104,10 +102,13 @@ import SwiftUI
         if borderTouchedX || borderTouchedY {
             let newWidth = borderTouchedX ? width * 2 : width
             let newHeight = borderTouchedY ? height * 2 : height
-            newArray = resize(cells: newArray, newWidth: newWidth, newHeight: newHeight)
+            swapArray = resize(cells: swapArray, newWidth: newWidth, newHeight: newHeight)
+            cells = Array(repeating: Array(repeating: 0, count: newWidth), count: newHeight)
         }
         
-        return newArray
+        let swapper = cells
+        cells = swapArray
+        swapArray = swapper
     }
     
     private func neighborsAmount(cells: [[Int]], y: Int, x: Int) -> Int {
