@@ -42,7 +42,8 @@ struct FieldSetupView: View {
                 }
 
                 NavigationLink(
-                    destination: GameView(cells: field.cells, renderZone: renderer.renderZone)
+                    destination: GameView(initialField: field,
+                                          renderZone: renderer.renderZone)
                 ) {
                     Text("start")
                 }

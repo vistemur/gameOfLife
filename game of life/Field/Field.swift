@@ -1,155 +1,256 @@
 import SwiftUI
 
+protocol FieldProtocol {
+    func setup(cells: [[Int]])
+    func toggle(_ location: CGPoint)
+    func getNextGeneration()
+    func copy() -> Field
+}
+
 @Observable class Field {
+        
+    var zones: [Coordinates: Zone]
     
-    private(set) var cells: [[Int]]
-    
-    var width: Int { cells.first?.count ?? 0 }
-    var height: Int { cells.count }
-    
-    private var swapArray: [[Int]]
-    
-    init(width: Int = 4, height: Int = 4) {
-        self.cells = Array(repeating: Array(repeating: 0, count: width), count: height)
-        self.swapArray = Array(repeating: Array(repeating: 0, count: width), count: height)
+    init() {
+        self.zones = [:]
     }
+    
+    private init(zones: [Coordinates : Zone]) {
+        self.zones = zones
+    }
+
+    @Observable class Zone: Hashable {
+        
+        static var size = 3
+        
+        var coordinates: Coordinates
+        var cells: [[Int]]
+        var swapCells: [[Int]]
+        
+        init() {
+            coordinates = Coordinates(x: 0, y: 0)
+            cells = Array(repeating: Array(repeating: 0, count: Zone.size), count: Zone.size)
+            swapCells = Array(repeating: Array(repeating: 0, count: Zone.size), count: Zone.size)
+        }
+        
+        convenience init(coordinates: Coordinates) {
+            self.init()
+            self.coordinates = coordinates
+        }
+        
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(coordinates)
+        }
+        
+        static func == (lhs: Field.Zone, rhs: Field.Zone) -> Bool {
+            lhs.coordinates == rhs.coordinates
+        }
+    }
+    
+    func getZone(x: Int, y: Int) -> Zone? {
+        zones[Coordinates(x: x, y: y)]
+    }
+}
+
+extension Field: FieldProtocol {
     
     func setup(cells: [[Int]]) {
-        self.cells = cells.map { $0.map { $0 } }
-        self.swapArray = cells.map { $0.map { $0 } }
-    }
-    
-    func toggle(_ location: CGPoint) { // from center
-        let requiredWidth = abs(location.x * 2)
-        var newWidth = CGFloat(width)
-        while newWidth <= requiredWidth {
-            newWidth *= 2
-        }
-        
-        let requiredHeight = abs(location.y * 2)
-        var newHeight = CGFloat(height)
-        while newHeight <= requiredHeight {
-            newHeight *= 2
-        }
-        
-        if Int(newWidth) > width
-            || Int(newHeight) > height {
-            cells = resize(cells: cells, newWidth: Int(newWidth), newHeight: Int(newHeight))
-            swapArray = Array(repeating: Array(repeating: 0, count: width), count: height)
-        }
-                
-        let x = Int(CGFloat(width) / 2 + location.x)
-        let y = Int(CGFloat(height) / 2 + location.y)
-        toggle(x: x, y: y)
-    }
-    
-    private func toggle(x: Int, y: Int) {
-        guard let value = cells[safe: y]?[safe: x] else {
-            return
-        }
-        
-        cells[y][x] = value == 0 ? 1 : 0
-    }
-    
-    func addBorders(cells: [[Int]]) -> [[Int]] {
-        var newArray = [[Int]]()
-        
-        let width = (cells[safe: 0]?.count ?? 0) + 2
-        newArray.append(Array(repeating: 0, count: width))
-        for y in 0 ..< cells.count {
-            var addition = [Int]()
-            
-            addition.append(0)
-            for x in 0 ..< cells[y].count {
-                addition.append(cells[y][x])
-            }
-            addition.append(0)
-            
-            newArray.append(addition)
-        }
-        newArray.append(Array(repeating: 0, count: width))
-        
-        return newArray
-    }
-    
-    func getNextGeneration() {
-        var borderTouchedY = false
-        var borderTouchedX = false
+        let height = cells.count
+        let width = cells.first?.count ?? 0
+        let centerY = height / 2
+        let centerX = width / 2
         
         for y in 0 ..< height {
             for x in 0 ..< width {
-                let neighbors = neighborsAmount(cells: cells, y: y, x: x)
-                if cells[y][x] == 0 {
-                    if neighbors == 3 {
-                        swapArray[y][x] = 1
-                        borderTouchedX = (x == 0 || x == width - 1) ? true : borderTouchedX
-                        borderTouchedY = (y == 0 || y == height - 1) ? true : borderTouchedY
+                let translatedY = y - centerY
+                let translatedX = x - centerX
+                if cells[y][x] == 1 {
+                    toggleAt(x: translatedX, y: translatedY)
+                }
+            }
+        }
+    }
+    
+    func toggle(_ location: CGPoint) {
+        let xCord = Int(location.x.rounded())
+        let yCord = Int(location.y.rounded())
+        toggleAt(x: xCord, y: yCord)
+    }
+    
+    private func toggleAt(x: Int, y: Int) {
+        let (zoneCoordinates, inside) = Coordinates(x: x, y: y).getZone()
+        
+        if let zone = zones[zoneCoordinates] {
+            if zone.cells[inside.y][inside.x] == 1 {
+                zone.cells[inside.y][inside.x] = 0
+            } else {
+                zone.cells[inside.y][inside.x] = 1
+            }
+        } else {
+            // add zone
+            let zone = Zone(coordinates: zoneCoordinates)
+            zone.cells[inside.y][inside.x] = 1
+            zones[zoneCoordinates] = zone
+        }
+    }
+    
+    func getNextGeneration() {
+        // min 1 neighbor
+        
+        var additionalCellsToCount = Set<Coordinates>()
+        var zonesToDelete = Set<Coordinates>()
+        
+        for (coordinates, zone) in zones {
+            var zoneCellsCount = 0
+            
+            for y in 0 ..< Field.Zone.size {
+                for x in 0 ..< Field.Zone.size {
+                    let globalCoordinates = Coordinates.global(zone: coordinates, inside: Coordinates(x: x, y: y))
+                    let neighborsCount = countNeghborsFor(coordinates: globalCoordinates)
+                    
+                    if zone.cells[y][x] == 1 {
+                        switch neighborsCount {
+                        case let n where n < 2:
+                            zone.swapCells[y][x] = 0
+                        case let n where n > 3:
+                            zone.swapCells[y][x] = 0
+                        default:
+                            zone.swapCells[y][x] = 1
+                            zoneCellsCount += 1
+                        }
                     } else {
-                        swapArray[y][x] = 0
+                        if neighborsCount == 3 {
+                            zone.swapCells[y][x] = 1
+                            zoneCellsCount += 1
+                        } else {
+                            zone.swapCells[y][x] = 0
+                        }
                     }
+                    
+                    if zone.cells[y][x] == 1 {
+                        // if on the edge without neigbor zone -> check neighbor cells (that has this cell as neighbor)
+                        
+                        // up
+                        if y == 0 {
+                            for x in globalCoordinates.x - 1 ... globalCoordinates.x + 1 {
+                                additionalCellsToCount.insert(Coordinates(x: x, y: globalCoordinates.y - 1))
+                            }
+                        }
+                        
+                        // down
+                        if y == Field.Zone.size - 1 {
+                            for x in globalCoordinates.x - 1 ... globalCoordinates.x + 1 {
+                                additionalCellsToCount.insert(Coordinates(x: x, y: globalCoordinates.y + 1))
+                            }
+                        }
+                        
+                        // left
+                        if x == 0 {
+                            for y in globalCoordinates.y - 1 ... globalCoordinates.y + 1 {
+                                additionalCellsToCount.insert(Coordinates(x: globalCoordinates.x - 1, y: y))
+                            }
+                        }
+                        
+                        // right
+                        if x == Field.Zone.size - 1 {
+                            for y in globalCoordinates.y - 1 ... globalCoordinates.y + 1 {
+                                additionalCellsToCount.insert(Coordinates(x: globalCoordinates.x + 1, y: y))
+                            }
+                        }
+                    }
+                }
+            }
+            
+            if zoneCellsCount == 0 {
+                zonesToDelete.insert(coordinates)
+            }
+        }
+                
+        for additionalCell in additionalCellsToCount {
+            let neighborsCount = countNeghborsFor(coordinates: additionalCell)
+            
+            if neighborsCount == 3 {
+                let (zoneCoordinates, inside) = additionalCell.getZone()
+                if let zone = zones[zoneCoordinates] {
+                    zone.swapCells[inside.y][inside.x] = 1
                 } else {
-                    if neighbors == 2 || neighbors == 3  {
-                        swapArray[y][x] = 1
-                        borderTouchedX = (x == 0 || x == width - 1) ? true : borderTouchedX
-                        borderTouchedY = (y == 0 || y == height - 1) ? true : borderTouchedY
-                    } else {
-                        swapArray[y][x] = 0
-                    }
+                    let zone = Zone(coordinates: zoneCoordinates)
+                    zone.swapCells[inside.y][inside.x] = 1
+                    zones[zoneCoordinates] = zone
                 }
             }
         }
         
-        if borderTouchedX || borderTouchedY {
-            let newWidth = borderTouchedX ? width * 2 : width
-            let newHeight = borderTouchedY ? height * 2 : height
-            swapArray = resize(cells: swapArray, newWidth: newWidth, newHeight: newHeight)
-            cells = Array(repeating: Array(repeating: 0, count: newWidth), count: newHeight)
+        for coordinates in zonesToDelete {
+            zones[coordinates] = nil
         }
         
-        let swapper = cells
-        cells = swapArray
-        swapArray = swapper
-    }
-    
-    private func neighborsAmount(cells: [[Int]], y: Int, x: Int) -> Int {
-        var neighbors = 0
-        
-        neighbors += (cells[safe: y - 1] ?? [])[safe: x - 1] ?? 0
-        neighbors += (cells[safe: y - 1] ?? [])[safe: x] ?? 0
-        neighbors += (cells[safe: y - 1] ?? [])[safe: x + 1] ?? 0
-        
-        neighbors += (cells[safe: y] ?? [])[safe: x - 1] ?? 0
-        neighbors += (cells[safe: y] ?? [])[safe: x + 1] ?? 0
-        
-        neighbors += (cells[safe: y + 1] ?? [])[safe: x - 1] ?? 0
-        neighbors += (cells[safe: y + 1] ?? [])[safe: x] ?? 0
-        neighbors += (cells[safe: y + 1] ?? [])[safe: x + 1] ?? 0
-        
-        return neighbors
-    }
-    
-    private func resize(cells: [[Int]], newWidth: Int, newHeight: Int) -> [[Int]] {
-        let width = cells.first?.count ?? 0
-        let height = cells.count
-        var newCells = [[Int]]()
-        
-        for _ in 1 ... newHeight {
-            let row = Array(repeating: 0, count: newWidth)
-            newCells.append(row)
+        for (_, zone) in zones {
+            zone.cells = zone.swapCells
         }
+    }
+    
+    private func countNeghborsFor(coordinates: Coordinates) -> Int {
+        var count = 0
         
-        for y in 0 ..< height {
-            for x in 0 ..< width {
-                newCells[newHeight / 2 - height / 2 + y][newWidth / 2 - width / 2 + x] = cells[y][x]
+        for neighborY in coordinates.y - 1 ... coordinates.y + 1 {
+            for neighborX in coordinates.x - 1 ... coordinates.x + 1 {
+                
+                if neighborY == coordinates.y && neighborX == coordinates.x {
+                    continue
+                }
+                
+                count += valueAt(coordinates: Coordinates(x: neighborX, y: neighborY))
             }
         }
         
-        return newCells
+        return count
+    }
+    
+    private func valueAt(coordinates: Coordinates) -> Int {
+        let (zoneCoordinates, inside) = coordinates.getZone()
+        
+        guard let zone = zones[zoneCoordinates] else {
+            return 0
+        }
+
+        return zone.cells[inside.y][inside.x]
+    }
+    
+    func copy() -> Field {
+        let newField = Field()
+        var newZones: [Coordinates: Zone] = [:]
+        zones.forEach { key, value in
+            let zone = Zone(coordinates: key)
+            zone.cells = value.cells.map { $0.map { $0 } }
+            zone.swapCells = value.swapCells.map { $0.map { $0 } }
+            newZones[key] = zone
+        }
+        newField.zones = newZones
+        return newField
+    }
+    
+    func setupCopy(from: Field) {
+        var newZones: [Coordinates: Zone] = [:]
+        from.zones.forEach { key, value in
+            let zone = Zone(coordinates: key)
+            zone.cells = value.cells.map { $0.map { $0 } }
+            zone.swapCells = value.swapCells.map { $0.map { $0 } }
+            newZones[key] = zone
+        }
+        zones = newZones
+    }
+}
+
+extension Field: CustomStringConvertible {
+    
+    var description: String {
+        return "zones = \(zones.count)"
     }
 }
 
 extension Collection {
     subscript (safe index: Index) -> Element? {
-        return indices.contains(index) ? self[index] : nil
+        indices.contains(index) ? self[index] : nil
     }
 }

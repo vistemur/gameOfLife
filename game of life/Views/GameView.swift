@@ -1,17 +1,10 @@
-//
-//  GameView.swift
-//  game of life
-//
-//  Created by Roman Pozdnyakov on 18.12.2023.
-//
-
 import SwiftUI
 
 struct GameView: View {
     
     // model
     
-    let cells: [[Int]]
+    let initialField: Field
     let renderZone: FieldRenderer.RenderZone
     
     // private
@@ -41,7 +34,8 @@ struct GameView: View {
             }
         }
         .onAppear { // setup data
-            field.setup(cells: cells)
+            field.setupCopy(from: initialField)
+            renderer.renderZone = renderZone.copy()
             timer.action = {
                 field.getNextGeneration()
             }
@@ -62,6 +56,7 @@ struct GameView: View {
         [0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0],
     ]
-    
-    return GameView(cells: cells, renderZone: FieldRenderer.RenderZone())
+    let field = Field()
+    field.setup(cells: cells)
+    return GameView(initialField: field, renderZone: FieldRenderer.RenderZone())
 }

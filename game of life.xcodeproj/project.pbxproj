@@ -7,14 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5E0E10B52EEE303B006870F8 /* Coordinates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0E10B42EEE303B006870F8 /* Coordinates.swift */; };
 		5E7030BE2B3A9B3A00AF72C3 /* lftimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E7030BD2B3A9B3A00AF72C3 /* lftimer.swift */; };
 		5E8854902B7866C200F9FEE4 /* GameFieldStressTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E88548F2B7866C200F9FEE4 /* GameFieldStressTest.swift */; };
 		5E8854932B78913900F9FEE4 /* FieldTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8854922B78913900F9FEE4 /* FieldTypes.swift */; };
 		5E8854952B78AC4E00F9FEE4 /* IterationsCounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8854942B78AC4E00F9FEE4 /* IterationsCounter.swift */; };
+		5E8854972B79B09000F9FEE4 /* FieldTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8854962B79B09000F9FEE4 /* FieldTests.swift */; };
 		5E9875462B2F3F0400038DA3 /* game_of_lifeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E9875452B2F3F0400038DA3 /* game_of_lifeApp.swift */; };
 		5E98754A2B2F3F0500038DA3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5E9875492B2F3F0500038DA3 /* Assets.xcassets */; };
 		5E98754D2B2F3F0500038DA3 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5E98754C2B2F3F0500038DA3 /* Preview Assets.xcassets */; };
 		5E9875542B2F3FA400038DA3 /* Field.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E9875532B2F3FA400038DA3 /* Field.swift */; };
+		5ED73D8A2EED8629001334B7 /* CoordinatesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ED73D892EED8629001334B7 /* CoordinatesTests.swift */; };
 		5EF936032B2FC30A002D64A1 /* FieldSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EF936022B2FC30A002D64A1 /* FieldSetupView.swift */; };
 		5EF936052B2FC312002D64A1 /* GameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EF936042B2FC312002D64A1 /* GameView.swift */; };
 		5EF936092B2FC5FA002D64A1 /* FieldRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EF936082B2FC5FA002D64A1 /* FieldRenderer.swift */; };
@@ -33,16 +36,19 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5E0E10B42EEE303B006870F8 /* Coordinates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinates.swift; sourceTree = "<group>"; };
 		5E7030BD2B3A9B3A00AF72C3 /* lftimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = lftimer.swift; sourceTree = "<group>"; };
 		5E8854842B78668200F9FEE4 /* game of life Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "game of life Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E88548F2B7866C200F9FEE4 /* GameFieldStressTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameFieldStressTest.swift; sourceTree = "<group>"; };
 		5E8854922B78913900F9FEE4 /* FieldTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FieldTypes.swift; sourceTree = "<group>"; };
 		5E8854942B78AC4E00F9FEE4 /* IterationsCounter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IterationsCounter.swift; sourceTree = "<group>"; };
+		5E8854962B79B09000F9FEE4 /* FieldTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FieldTests.swift; sourceTree = "<group>"; };
 		5E9875422B2F3F0400038DA3 /* game of life.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "game of life.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E9875452B2F3F0400038DA3 /* game_of_lifeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = game_of_lifeApp.swift; sourceTree = "<group>"; };
 		5E9875492B2F3F0500038DA3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5E98754C2B2F3F0500038DA3 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		5E9875532B2F3FA400038DA3 /* Field.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Field.swift; sourceTree = "<group>"; };
+		5ED73D892EED8629001334B7 /* CoordinatesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoordinatesTests.swift; sourceTree = "<group>"; };
 		5EF936022B2FC30A002D64A1 /* FieldSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FieldSetupView.swift; sourceTree = "<group>"; };
 		5EF936042B2FC312002D64A1 /* GameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameView.swift; sourceTree = "<group>"; };
 		5EF936082B2FC5FA002D64A1 /* FieldRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FieldRenderer.swift; sourceTree = "<group>"; };
@@ -68,6 +74,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5E0E10B22EED8AF0006870F8 /* Coordinates */ = {
+			isa = PBXGroup;
+			children = (
+				5ED73D892EED8629001334B7 /* CoordinatesTests.swift */,
+			);
+			path = Coordinates;
+			sourceTree = "<group>";
+		};
 		5E7030B92B3A9A2500AF72C3 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -97,6 +111,7 @@
 			children = (
 				5E9875532B2F3FA400038DA3 /* Field.swift */,
 				5EF936082B2FC5FA002D64A1 /* FieldRenderer.swift */,
+				5E0E10B42EEE303B006870F8 /* Coordinates.swift */,
 			);
 			path = Field;
 			sourceTree = "<group>";
@@ -113,6 +128,7 @@
 		5E88548D2B78668E00F9FEE4 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				5E0E10B22EED8AF0006870F8 /* Coordinates */,
 				5E88548E2B78669400F9FEE4 /* Field */,
 			);
 			path = Tests;
@@ -121,6 +137,7 @@
 		5E88548E2B78669400F9FEE4 /* Field */ = {
 			isa = PBXGroup;
 			children = (
+				5E8854962B79B09000F9FEE4 /* FieldTests.swift */,
 				5E88548F2B7866C200F9FEE4 /* GameFieldStressTest.swift */,
 				5E8854922B78913900F9FEE4 /* FieldTypes.swift */,
 			);
@@ -303,7 +320,9 @@
 			files = (
 				5E8854952B78AC4E00F9FEE4 /* IterationsCounter.swift in Sources */,
 				5E8854932B78913900F9FEE4 /* FieldTypes.swift in Sources */,
+				5E8854972B79B09000F9FEE4 /* FieldTests.swift in Sources */,
 				5E8854902B7866C200F9FEE4 /* GameFieldStressTest.swift in Sources */,
+				5ED73D8A2EED8629001334B7 /* CoordinatesTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -318,6 +337,7 @@
 				5E9875462B2F3F0400038DA3 /* game_of_lifeApp.swift in Sources */,
 				5EF936032B2FC30A002D64A1 /* FieldSetupView.swift in Sources */,
 				5EF936052B2FC312002D64A1 /* GameView.swift in Sources */,
+				5E0E10B52EEE303B006870F8 /* Coordinates.swift in Sources */,
 				5E7030BE2B3A9B3A00AF72C3 /* lftimer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -493,6 +513,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"game of life/Preview Content\"";
@@ -511,6 +532,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "romik.game-of-life";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -522,6 +544,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"game of life/Preview Content\"";
@@ -540,6 +563,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "romik.game-of-life";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
